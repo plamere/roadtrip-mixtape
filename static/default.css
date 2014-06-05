@@ -317,9 +317,11 @@ a#next {
 }
 
 #powered {
+    width:200px;
     margin-top:10px;
-    margin-left:30px;
+    text-align:center;
     font-size:9px;
+    margin-left:10px;
 }
 
 
