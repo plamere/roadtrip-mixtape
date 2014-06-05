@@ -5,6 +5,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <title>Roadtrip Mixtape</title>
 <link href="default.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
 <script type="text/javascript" src=" https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry"></script>
 <script type="text/javascript" src="roadtrip.js"></script>
@@ -29,20 +30,20 @@
     <div id="playlist">
         <h2> Roadtrip Mixtape </h2>
         <div id=info>
-            Create a mixtape of local artists <br> for your roadtrip. <a href="faq.html">More info</a>
+            Create a mixtape of local artists <br> for your roadtrip. 
         </div>
         <div id='search'>
             <b>Start: </b> <input id="start" value='boston' onchange="calcRoute();"/>
             <br>
             <b>End: </b> <input id="end" value='new york' onchange="calcRoute();"/>
             <br>
-            <button id="route_button" onclick="calcRoute()"> Make Mixtape</button>
+            <!--<button id="route_button" onclick="calcRoute()"> Make Mixtape</button> -->
             <button id="playlist_button" onclick="makePlaylist()"> Play Mixtape</button>
             <div id='error'> </div>
         </div>
 
         <div id="player">
-            <div id="spotify"></div>
+            <!--<div id="spotify"></div> -->
             <div id="album-art" title="visit this album at Spotify"> 
                 <img id="album-art-img" width="200px" height="200px" alt="masks" src="assets/66.png"/> 
             </div>
@@ -83,10 +84,10 @@
         </table>
         <p>
 
-        <div id='powered'>
-        Powered by The Echo Nest and Spotify
-        </div>
     </div>
+        <div id='powered'>
+        Powered by The Echo Nest.  -- <a href="faq.html">More info</a>
+        </div>
 
     <div id="map_canvas"></div>
 </body>

@@ -1,1 +1,1 @@
-deploy_labs '*' roadtrip
+rsync -avz --exclude .git --exclude .svn --exclude archive --exclude '*.pyc' *  root@labs.echonest.com:tests/fun/roadtrip

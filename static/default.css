@@ -1,9 +1,12 @@
 html, body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  font-family: 'Open Sans', sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color:#aaccaa;
+  background-color:#0d3d0d;
+  color:#cccccc;
+  font-weight:thin;
 }
 
 p {
@@ -14,7 +17,7 @@ p {
 }
 
 h2 {
-    font-size:20px;
+    font-size:24px;
 }
 
 #info {
@@ -55,12 +58,20 @@ select,
     margin-left:auto;
     margin-right:auto;
     width: 600px;
-    background-color:#8cccac;
+    background-color:#333;
     padding:20px;
   -webkit-border-radius: 13px;
      -moz-border-radius: 13px;
           border-radius: 13px;
     
+}
+
+a:visited {
+    color:green;
+}
+
+a:link {
+    color:#84BC00;
 }
 
 .answer {
@@ -72,6 +83,7 @@ select,
     margin-left: 10px;
     font-size:12px;
     margin-bottom: 20px;
+    color:black;
 }
 
 .leghead {
@@ -95,6 +107,20 @@ a.button {
    height:33px;
 }
 
+#playlist_button {
+    text-align:center;
+    height:24px;
+    width:190px;
+    border-style:none;
+    border-width:0;
+    background-color:#84BC00;
+}
+
+#playlist_button:hover {
+    background-color:#84CC00;
+}
+
+
 
 #map_canvas {
   position:absolute;
@@ -117,17 +143,21 @@ a.button {
 
 
 #search {
-    padding-left:10px;
+    padding-left:14px;
     width:200px;
 }
 
 #player {
+    margin-top:10px;
     padding-left:10px;
     width:200px;
+    color:#111111;
 }
 
 #trip-info {
-    font-size:14px;
+    display:none;
+    color:#111111;
+    font-size:10px;
     margin-left:20px;
     margin-top:10px;
     padding-top:10px;
@@ -149,9 +179,10 @@ a.button {
     margin:0;
     padding:0;
     text-align:left;
-    font-size:15px;
-    opacity: .9;
+    font-size:12px;
+    opacity: 1.0;
     background-color:#F1F1F1;
+    background-color:#ffffff;
     -webkit-border-bottom-right-radius: 12px; /* Safari prototype */
     -webkit-border-bottom-left-radius: 12px; /* Safari prototype */
     -moz-border-bottom-radius: 10px; /* Gecko browsers */
@@ -250,6 +281,7 @@ a#next {
 #song-title {
     margin-top:10px;
     margin-left:10px;
+    font-size:14px;
 }
 
 
@@ -285,7 +317,8 @@ a#next {
 }
 
 #powered {
-    text-align:center;
+    margin-top:10px;
+    margin-left:30px;
     font-size:9px;
 }
 
