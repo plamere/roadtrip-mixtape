@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Roadtrip Mixtape</title>
+<link href="default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src=" https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry"></script>
+<script type="text/javascript" src="roadtrip.js"></script>
+<script type="text/javascript" src="spotify.js"></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3675615-35']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') +
+'.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+
+<body onload="initialize()">
+    <div id="playlist">
+        <h2> Roadtrip Mixtape </h2>
+        <div id=info>
+            Create a mixtape of local artists <br> for your roadtrip. <a href="faq.html">More info</a>
+        </div>
+        <div id='search'>
+            <b>Start: </b> <input id="start" value='boston' onchange="calcRoute();"/>
+            <br>
+            <b>End: </b> <input id="end" value='new york' onchange="calcRoute();"/>
+            <br>
+            <button id="route_button" onclick="calcRoute()"> Make Mixtape</button>
+            <button id="playlist_button" onclick="makePlaylist()"> Play Mixtape</button>
+            <div id='error'> </div>
+        </div>
+
+        <div id="player">
+            <div id="spotify"></div>
+            <div id="album-art" title="visit this album at Spotify"> 
+                <img id="album-art-img" width="200px" height="200px" alt="masks" src="assets/66.png"/> 
+            </div>
+            <div id="controls">
+                <div id="audio-controls">
+                    <a title="pause/play the music" id="pause" class="button tip">pause</a>
+                    <a title="advance to the next track"  id="next" class="button tip">next</a>
+                    <a class="tip" title="mutes/unmutes the music" id="mute"> <img alt="mute" id="mute_img" src="assets/Sound_Button.png"/></a>
+                    <a title="opens this track on the Spotify web site" id="buy"
+                    class="tip" target="spotify" href="http://spotify.com"><img
+                    alt="spotify logo" width="60px" src="assets/small-spotify-logo.jpg"/></a>
+                </div>
+                <div id="audio-info">
+                    <div class="limited-label" title="visit this song at Spotify" id="song-title"> </div>
+                    <div class="limited-label" title="visit this artist at Spotify" id="artist-name"> </div>
+                    <div class="limited-label" title="city of origin for this artist" id="artist-city"> </div>
+                </div>
+                <div id="audio-footer">
+                    <span id="track-time" title="click to reverse the direction of time"> 00:00 </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='trip-info'>
+        <b> Trip Info </b><br>
+        <table id='trip-table'>
+            <!--
+            <tr><td title="Starting point">Start: <td id='tt-start'>Boston</td></tr>
+            <tr><td title="Ending point">End: <td id='tt-end'>New York</td></tr>
+            -->
+            <tr><td title="Travel distance">Distance: <td id='tt-distance'>174 miles</td></tr>
+            <tr><td title="Travel time">Time: <td id='tt-time'>02:54  </td></tr>
+            <tr><td title="Number of artists played">Artists: <td id='tt-artists'>43</td></tr>
+            <tr><td title="Cities with artists encountered">Cities: <td id='tt-cities'>17</td></tr>
+            <tr><td title="Number of 15 minute playlist legs on the trip">Legs: <td id='tt-legs'>14</td></tr>
+            <tr><td title="average distance to artists on the trip">Avg distance: <td id='tt-density'></td></tr>
+        </table>
+        <p>
+
+        <div id='powered'>
+        Powered by The Echo Nest and Spotify
+        </div>
+    </div>
+
+    <div id="map_canvas"></div>
+</body>
+</html>

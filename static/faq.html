@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Roadtrip Mixtape FAQ</title>
+<link href="default.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3675615-35']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') +
+'.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<div id='faq'>
+    <h2> Roadtrip Mixtape Faq </h2>
+    <ul>
+        <li> <b> What is this? </b>
+        <div class='answer'>
+
+            This is an application that you can use to create road trip playlists. Type in the name of
+            your starting and ending points, and the application will create a playlist of music by
+            artists that from the area you are traveling through. Drive through Boston you might
+            hear Aerosmith or Donna Summer. Drive through New Orleans and you might hear Lil Wayne or Dr.
+            John.
+            <p></p>
+            <img src='assets/Roadtrip Mixtape-2.png'>
+            <p></p>
+            When you click 'Play mixtape' your playlist will start playing.  
+            <p></p>
+            <img width='200px' src='assets/Roadtrip Mixtape-4.png'>
+            <p></p>
+            <p></p>
+            Each leg is represented on the map by a green dot. If you click on the green dot you'll see info on
+            that leg including a list of artists along with the city that they are from.
+            <p></p>
+            <img src='assets/Roadtrip Mixtape-1.png'>
+            <p></p>
+            Pressing the next button in the music player will advance you to the next song on the
+            roadtrip. The current leg is shown with a red dot.
+            <p></p>
+            Some Trip Info is shown, including the number of artists on the route. One bit of interesting
+            info (at least to me), is the 'Avg distance'. This shows the average distance to the nearest
+            artist throughout the course of the trip. The lower the distance, the more musically dense the
+            geographic region.  
+            <p></p>
+            <img src='assets/Roadtrip Mixtape-6.png'>
+            <p></p>
+
+            You can also just click anywhere on the map and a list of the most popular local artists will
+            be show. If you click the 'Play this location' button, you can listen to the artists.
+            <p></p>
+            <img src='assets/Roadtrip Mixtape-5.png'>
+
+        </div>
+
+        <li> <b> How does it work? </b>
+        <div class='answer'>
+            The app uses the nifty Google Maps API to calculate and display your route. The route is then 
+            broken down into 15 minute legs. For each leg, we find the nearest five unplayed artists and use
+            them to generate a 15 minute playlist. If there are more than five nearby artists, we chose
+            the most popular five. 
+            <p></p>
+
+        <li> <b> Does it make Spotify playlists? </b>
+        <div class='answer'>
+                Not yet, but soon!
+        </div>
+
+        <li> <b> What other features are planned? </b>
+        <div class='answer'>
+            Some possible features in the works:
+            <p></p>
+            <ul>
+                <li> Make a mobile version that you can actually take with you on the road.
+                <li> Make a version that works with other music services like Spotify
+                <li> Allow you to restrict music selected to particular genres or styles
+                <li> Incorporate concert info
+            </ul>
+        </div>
+
+        <li> <b> What technologies does it use? </b>
+        <div class='answer'>
+
+            <a href="http://developer.echonest.com">The Echo Nest API</a> is used to get the artist
+            location data.  <a href="https://developers.google.com/maps/">Google maps API</a> for all the
+            mapping and route finding. <a href="http://developer.spotify.com/">Spotify</a> 
+            for the music and album art.
+
+        </div>
+
+        <li> <b> Who built it? </b>
+        <div class='answer'>
+            <a href="http://MusicMachinery.com">Paul Lamere</a> from The Echo Nest. You can tweet
+            suggestions to him at <a href='http://twitter.com/plamere'>@plamere</a>
+        </div>
+
+    </ul>
+</div>
+</html>
