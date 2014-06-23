@@ -144,7 +144,6 @@ function playTrack(artist, track) {
 }
 
 function playSpotifySong(qitem) {
-    console.log('play spotify song', qitem);
     var artist = qitem.artist;
     var song = artist.songs[artist.curSongIndex++];
     if (artist.curSongIndex >= artist.songs.length) {
@@ -159,7 +158,6 @@ function playSpotifySong(qitem) {
     } else {
         $.getJSON('https://api.spotify.com/v1/tracks/' + song.tid,
             function(data) {
-                console.log('track', data);
                 song.track = data;
                 playTrack(artist, song.track);
                 if (qitem.callback) {

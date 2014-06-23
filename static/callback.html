@@ -10,7 +10,6 @@ var g_username = '';
 var g_tracks = [];
 
 function getUsername(callback) {
-	console.log('getUsername');
 	var url = 'https://api.spotify.com/v1/me';
 	$.ajax(url, {
 		dataType: 'json',
@@ -18,7 +17,6 @@ function getUsername(callback) {
 			'Authorization': 'Bearer ' + g_access_token
 		},
 		success: function(r) {
-			console.log('got username response', r);
 			callback(r.id);
 		},
 		error: function(r) {
@@ -28,7 +26,6 @@ function getUsername(callback) {
 }
 
 function createPlaylist(username, name, callback) {
-	console.log('createPlaylist', username, name);
 	var url = 'https://api.spotify.com/v1/users/' + username + '/playlists';
 	$.ajax(url, {
 		type: 'POST',
@@ -42,11 +39,9 @@ function createPlaylist(username, name, callback) {
 			'Content-Type': 'application/json'
 		},
 		success: function(r) {
-			console.log('create playlist response', r);
 			callback(r.id);
 		},
 		error: function(r) {
-            console.log(r);
 			callback(null);
 		}
 	});
@@ -54,7 +49,6 @@ function createPlaylist(username, name, callback) {
 
 function addTracksToPlaylist(username, playlist, tracks, start, callback) {
     var maxTracksPerPlaylistAdd = 100;
-	console.log('addTracksToPlaylist', username, playlist, tracks, start);
 	var url = 'https://api.spotify.com/v1/users/' + username +
 		'/playlists/' + playlist +
 		'/tracks'; 
@@ -69,7 +63,6 @@ function addTracksToPlaylist(username, playlist, tracks, start, callback) {
 			'Content-Type': 'application/json'
 		},
 		success: function(r) {
-			console.log('add track response', r);
             if (start + maxTracksPerPlaylistAdd >= tracks.length) {
                 callback('good');
             } else {
@@ -78,7 +71,6 @@ function addTracksToPlaylist(username, playlist, tracks, start, callback) {
             }
 		},
 		error: function(r, status, err) {
-            console.log('trouble with the save', r, status, err);
 			callback(null);
 		}
 	});
@@ -94,7 +86,6 @@ function doit() {
 	var all = hash.split('&');
     var maxTracks = 10;
 	var args = {};
-	console.log('all', all);
 	all.forEach(function(keyvalue) {
 		var idx = keyvalue.indexOf('=');
 		var key = keyvalue.substring(0, idx);
@@ -107,28 +98,22 @@ function doit() {
 
     // g_tracks = g_tracks.slice(maxTracks);
 
-	console.log('got args', args);
 
 	if (typeof(args['access_token']) != 'undefined') {
 		// got access token
-		console.log('got access token', args['access_token']);
 		g_access_token = args['access_token'];
 	}
 
 	getUsername(function(username) {
-		console.log('got username, creating playlist', username, g_name);
 		createPlaylist(username, g_name, function(playlist) {
-			console.log('created playlist', playlist);
             if (playlist) {
                 addTracksToPlaylist(username, playlist, g_tracks, 0, function(ok) {
                     if (ok) {
-                        console.log('tracks added.');
                         $('#playlistlink').attr('href', 'spotify:user:'+username+':playlist:'+playlist);
                         $("#title").text(g_name);
                         $('#done').show();
                         $('#creating').hide();
                     } else {
-                        console.log('trouble');
                         $('#error').show();
                         $('#creating').hide();
                     }

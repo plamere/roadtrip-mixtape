@@ -24,7 +24,6 @@ function initialize() {
     setPlaying(false);
     $.getJSON('locations',  function(data) {
         cities = data;
-        console.log('cities', cities);
         drawMap();
     });
 }
@@ -356,12 +355,10 @@ function playCurrentLocation() {
 
 
 function queueNextSongForArtist(artist) {
-    console.log('queueArtist', artist);
     queueArtist(artist, function() { artistPlayed(artist.artist_id); } );
 }
 
 function showNearbyOverlay(cities, pos) {
-    console.log('SNO', cities, pos);
     var contents = "";
     var totalArtists = 0;
     contents += "<div class='overlay-info'>";
@@ -373,7 +370,6 @@ function showNearbyOverlay(cities, pos) {
         contents += "<b>" + city.city + "</b>";
         contents += "<ul>";
 
-        console.log('SNOA', artists);
         for (var j = 0; j < artists.length; j++) {
             contents += "<li>  " + artists[j].name;
             totalArtists += 1;
@@ -454,7 +450,6 @@ function playPoint(which) {
     track('playPoint', currentPoints[which].info[0].city.city);
     clearQueue();
     shuffle(artists);
-    console.log('playPoint', title, artists);
     playInSpotify(title, artists);
 }
 
@@ -488,7 +483,6 @@ function shuffle(arry) {
 }
 
 function playInSpotify(title, artists) {
-    console.log('play in spotify', title, artists);
     var duration = 0;
     var secsPerPlaylist = minutesPerPlaylist * 60;
     while (duration < secsPerPlaylist) {
@@ -560,8 +554,6 @@ function showFullPlaylist(points) {
     spot.empty();
     for (var i = 0; i < points.length; i++) {
         var p = points[i];
-        console.log('leg', i);
-        console.log(points[i]);
         var leg = $("<div>", { 'class' : 'leg-div' } );
         var legHeader = $("<div class='leghead'>");
         legHeader.html('Leg ' + (i + 1));
@@ -635,7 +627,6 @@ function reportLegStats(ll) {
         }
         last = ll[i];
    }
-   console.log('  ls', 'min', mtof(minDist), 'max', mtof(maxDist), 'avg', mtof(sumDist / (ll.length - 1)), 'tot', sumDist);
 }
 
 
@@ -867,11 +858,9 @@ function toTitleCase(str) {
 function savePlaylist() {
     getCurTracks(function(spotifyTracks) {
         var title = getPlaylistTitle();
-        console.log('savePlaylist', title, spotifyTracks);
         var client_id = '';
         var redirect_uri = '';
 
-        console.log('location.host', location.host);
         if (location.host == 'localhost:8778') {
             client_id = 'bd17bb97832c44b28f4336c710fda877';
             redirect_uri = 'http://localhost:8778/CityServer/callback.html';
@@ -880,7 +869,6 @@ function savePlaylist() {
             redirect_uri = 'http://labs.echonest.com/CityServer/callback.html';
         }
 
-        console.log('redirect ...', redirect_uri);
 
         var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
             '&response_type=token' +
