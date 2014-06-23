@@ -8,6 +8,7 @@
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
 <script type="text/javascript" src=" https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
 <script type="text/javascript" src="roadtrip.js"></script>
 <script type="text/javascript" src="spotify.js"></script>
 <script type="text/javascript">
@@ -38,7 +39,8 @@
             <b>End: </b> <input id="end" value='new york' onchange="calcRoute();"/>
             <br>
             <!--<button id="route_button" onclick="calcRoute()"> Make Mixtape</button> -->
-            <button id="playlist_button" onclick="makePlaylist()"> Play Mixtape</button>
+            <button class="playlist_button" onclick="makePlaylist()"> Play Mixtape</button>
+            <button class="playlist_button" onclick="savePlaylist()"> Save Mixtape</button>
             <div id='error'> </div>
         </div>
 

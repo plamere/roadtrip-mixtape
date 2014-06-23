@@ -84,8 +84,42 @@ class CityServer(object):
         print 'filtered', len(self.city_locations), 'to', len(filtered), 'locations'
         self.city_locations = filtered
 
-
+# AR03BDP1187FB5B324 <sep> 26dSoYclwsYLMAKD3tpOr4 <sep> Britney Spears <sep> 0.733155 <sep> Mccomb, MS, US <sep> 2vTPWWm2Lgc6kI6a3Z3uXY:247;717TY4sfgKQm4kFbYQIzgo:198;3MjUtNVVq3C8Fn0MP3zhXa:211;38iU2jg98IZZEIJPrP7aWD:237;5cCAZS9VhLGEDV4NCfieeg:210
     def load_artist_locations(self):
+        # asongs = self. load_songs('songs.dat')
+        acount = 0
+        missing = 0
+        bad_city = 0
+        for line in open('data/spot_top_songs.dat'):
+            fields  = line.strip().split(' <sep> ')
+            if len(fields) == 6:
+                id, sid, artist, hot, city, ssongs = fields
+                if self.is_valid_city(city):
+                    songs = []
+                    for song_stuff in ssongs.split(';'):
+                        tid, sdur = song_stuff.split(':')
+                        song = { 'tid':tid, 'dur':int(sdur) }
+                        songs.append(song)
+
+                    artist = { 'name' : artist, 'hotttnesss' : hot, 'artist_id': id, 'sid': sid, 'songs' : songs }
+                    city_id = self.get_city_id(city)
+                    self.artists_by_city[city_id].append(artist)
+                    acount += 1
+                else:
+                    bad_city += 1
+
+        for k, v in self.artists_by_city.items():
+            v.sort(key=lambda a: a['hotttnesss'], reverse=True)
+            if k in self.city_info:
+                city = self.city_info[k]
+                city['artists'] = len(v)
+            else:
+                print 'no city info for', k, len(v)
+               
+
+        print 'cities', len(self.artists_by_city), 'artists', acount, 'missing', missing, 'invalid city', bad_city
+
+    def load_artist_locations_old(self):
         # asongs = self. load_songs('songs.dat')
         acount = 0
         missing = 0

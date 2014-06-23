@@ -5,8 +5,6 @@ var paused;
 var playing = false;
 var playQueue = [];
 var audio = new Audio();
-var artistSongs = {};
-var config = getConfig();
 
 function initPlayer() {
     configureControls();
@@ -76,59 +74,6 @@ function setPlaying(isPlaying) {
     }
 }
 
-function getTopTracksForSpotifyArtist(sid, callback) {
-    var url = 'https://api.spotify.com/v1/artists/' + sid + '/top-tracks?country=US';
-    $.getJSON(url, function(data) {
-        callback(data.tracks);
-    });
-}
-
-function filterTracks(tracks) {
-    var out = [];
-
-    function isGoodTrack(track) {
-        return track.preview_url != null;
-    }
-
-    tracks.forEach(function(track) {
-        if (isGoodTrack(track)) {
-            out.push(track);
-        }
-    });
-    return out;
-}
-
-function playSpotifyArtist(artist) {
-    if (! ('tracks' in artist)) {
-        var url = config.echoNestHost + 'artist/profile';
-        $.getJSON(url, { id:artist.artist_id, api_key:config.apiKey, bucket:config.spotifySpace}, function(data) {
-            if (data.response.status.code == 0) {
-                var partist = data.response.artist;
-                if ('foreign_ids' in partist && partist.foreign_ids.length > 0) {
-                    var spotifyArtistID = partist.foreign_ids[0].foreign_id;
-                    var fields = spotifyArtistID.split(':');
-                    var sid = fields[fields.length - 1];
-                    getTopTracksForSpotifyArtist(sid, function(tracks) {
-                        var ftracks = filterTracks(tracks);
-                        if (ftracks && ftracks.length > 0) {
-                            artist.tracks = ftracks;
-                            artist.trackIndex = 0;
-                            playNextArtistTrack(artist);
-                        } else {
-                            next();
-                        }
-                    });
-                } else {
-                    next();
-                }
-            } else {
-                next();
-            }
-        });
-    } else {
-        playNextArtistTrack(artist);
-    }
-}
 
 function playNextArtistTrack(artist) {
     var track = artist.tracks[artist.trackIndex++];
@@ -146,6 +91,7 @@ function playNextArtistTrack(artist) {
     audioResume();
 }
 
+
 function getBestImage(images, minWidth) {
     var best = images[0];
     images.forEach(
@@ -160,14 +106,6 @@ function getBestImage(images, minWidth) {
 
 function isPlaying() {
     return playing;
-}
-
-function queueSong(song, callback) {
-    var qItem = { song:song, callback:callback};
-    playQueue.push(qItem);
-    if (! isPlaying()) {
-        next();
-    }
 }
 
 function queueArtist(artist, callback) {
@@ -187,17 +125,50 @@ function next() {
     if (playQueue.length > 0) {
         playing = true;
         var qitem = playQueue.shift();
-        if (qitem.callback) {
-            qitem.callback();
-        }
-        playSpotifyArtist(qitem.artist);
+        playSpotifySong(qitem);
     }  else {
         playing = false;
         needMoreSongs();
     }
 }
 
+function playTrack(artist, track) {
+    $("#song-title").text(track.name);
+    $("#artist-name").text(artist.name);
+    var image = getBestImage(track.album.images, 200);
+    if (image) {
+        $("#album-art-img").attr('src', image.url);
+    }
+    audio.attr('src', track.preview_url);
+    audioResume();
+}
 
+function playSpotifySong(qitem) {
+    console.log('play spotify song', qitem);
+    var artist = qitem.artist;
+    var song = artist.songs[artist.curSongIndex++];
+    if (artist.curSongIndex >= artist.songs.length) {
+        artist.curSongIndex = 0;
+    }
+
+    if ('track' in song) {
+        playTrack(artist, song.track);
+        if (qitem.callback) {
+            qitem.callback(song);
+        }
+    } else {
+        $.getJSON('https://api.spotify.com/v1/tracks/' + song.tid,
+            function(data) {
+                console.log('track', data);
+                song.track = data;
+                playTrack(artist, song.track);
+                if (qitem.callback) {
+                    qitem.callback(song);
+                }
+            }
+        );
+    }
+}
 
 function audioStop() {
     audio.get(0).pause();
@@ -208,7 +179,16 @@ function audioPause() {
 }
 
 function audioResume() {
-    audio.get(0).play();
+    if (hasAudio()) {
+        audio.get(0).play();
+    } else {
+        playAllPoints();
+    }
+}
+
+function hasAudio() {
+    var src = audio.attr('src');
+    return src && src.length > 0;
 }
 
 function audioMute() {
@@ -272,10 +252,3 @@ function fmtTime(position) {
     return mins + ":" + secs;
 }
 
-function getConfig() {
-    return {
-        apiKey: "ECLJI0GPBJVEXSZDT",
-        spotifySpace: "id:spotifyv2-ZZ",
-        echoNestHost: "http://developer.echonest.com/api/v4/"
-    };
-}

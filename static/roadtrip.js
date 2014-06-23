@@ -61,7 +61,7 @@ function initCities() {
   
 function fetchCityArtistsForPlaylist(points, ids) {
     ids = filterCityIds(ids);
-    $.getJSON('artists?callback=?',  { id:ids.join('_'), count: maxArtistsPerCity}, function(data) {
+    $.getJSON('artists',  { id:ids.join('_'), count: maxArtistsPerCity}, function(data) {
         processCityData(data);
         assignArtistsToWaypoints(points, data);
         showTripInfo(points);
@@ -143,7 +143,7 @@ function fetchCityArtistsForNearby(cities, pos) {
 
     ids = filterCityIds(ids);
     if (ids.length > 0) {
-        $.getJSON('artists?callback=?',  { id:ids.join('_'), count: maxArtistsPerCity}, function(data) {
+        $.getJSON('artists',  { id:ids.join('_'), count: maxArtistsPerCity}, function(data) {
             processCityData(data);
             showNearbyOverlay(cities, pos);
         });
@@ -162,12 +162,12 @@ function processCityData(data) {
         for (var j = 0; j < artists.length; j++) {
             var ainfo = { city: city, artist: artists[j]};
             artistInfo[artists[j].artist_id] = ainfo;
+            artists[j].curSongIndex = 0;
         }
         city.latlng = new google.maps.LatLng(city.lat, city.lng);
         cityArtists[city.city_id] = artists;
     }
 }
-
 
 
 function assignArtistsToWaypoints(points, data) {
@@ -356,10 +356,12 @@ function playCurrentLocation() {
 
 
 function queueNextSongForArtist(artist) {
+    console.log('queueArtist', artist);
     queueArtist(artist, function() { artistPlayed(artist.artist_id); } );
 }
 
 function showNearbyOverlay(cities, pos) {
+    console.log('SNO', cities, pos);
     var contents = "";
     var totalArtists = 0;
     contents += "<div class='overlay-info'>";
@@ -371,6 +373,7 @@ function showNearbyOverlay(cities, pos) {
         contents += "<b>" + city.city + "</b>";
         contents += "<ul>";
 
+        console.log('SNOA', artists);
         for (var j = 0; j < artists.length; j++) {
             contents += "<li>  " + artists[j].name;
             totalArtists += 1;
@@ -425,23 +428,34 @@ function selectLegMarker(which) {
 }
 
 
+function getAllArtistsInPath() {
+    var allArtists = [];
+    _.each(currentPoints, function(point) {
+        _.each(point.info, function(info) {
+            _.each(info.artists, function(artist) {
+                allArtists.push(artist);
+            });
+        });
+    });
+    return allArtists;
+}
 
 function playPoint(which) {
     curPoint = which;
     selectLegMarker(which);
-    var ids = [];
+    var artists = [];
     for (var i = 0; i < currentPoints[which].info.length; i++) {
         var pi = currentPoints[which].info[i];
         for (var j = 0; j < pi.artists.length; j++) {
-            ids.push(pi.artists[j].artist_id);
+            artists.push(pi.artists[j]);
         }
     }
     var title = 'Music near ' + currentPoints[which].info[0].city.city;
     track('playPoint', currentPoints[which].info[0].city.city);
     clearQueue();
-    shuffle(ids);
-    console.log('playPoint', title, ids);
-    playInSpotify(title, ids);
+    shuffle(artists);
+    console.log('playPoint', title, artists);
+    playInSpotify(title, artists);
 }
 
 function needMoreSongs() {
@@ -473,17 +487,15 @@ function shuffle(arry) {
     }
 }
 
-function playInSpotify(title, ids) {
-    console.log('play in spotify', title, ids);
+function playInSpotify(title, artists) {
+    console.log('play in spotify', title, artists);
     var duration = 0;
     var secsPerPlaylist = minutesPerPlaylist * 60;
     while (duration < secsPerPlaylist) {
-        for (var i = 0; i < ids.length; i++) {
-            var id = ids[i];
-            var artist = artistInfo[id].artist;
-            queueArtist(artist, function() { artistPlayed(id); } );
-            sdur = 180;
-            duration += sdur;
+        for (var i = 0; i < artists.length; i++) {
+            var artist = artists[i];
+            var dur = queueArtist(artist, function() { artistPlayed(artist); } );
+            duration += dur;
             if (duration >= secsPerPlaylist) {
                 break;
             }
@@ -491,8 +503,8 @@ function playInSpotify(title, ids) {
     }
 }
 
-function artistPlayed(artist_id) {
-    var ainfo = artistInfo[artist_id];
+function artistPlayed(artist) {
+    var ainfo = artistInfo[artist.artist_id];
     $("#artist-city").html(ainfo.city.city);
     clearNearbyMarkers();
     addNearbyCityMarker(ainfo.city);
@@ -827,6 +839,59 @@ function setPlaying(playing) {
        $('#pause').css("background-image", "url(assets/Play_StackedButton2.png)");
     }
 }
+
+function getPlaylistTitle() {
+    var start = $("#start").val();
+    var end = $("#end").val();
+    return "From " + toTitleCase(start) + " to " + toTitleCase(end) + " - a Roadtrip Mixtape";
+}
+
+function getCurTracks(callback) {
+    var artists = getAllArtistsInPath();
+    getSpotifyTrackIdsForArtists(artists, callback);
+}
+
+function getSpotifyTrackIdsForArtists(artists, callback) {
+    var sids = [];
+    _.each(artists, function(artist) {
+        sids.push('spotify:track:' + artist.songs[artist.curSongIndex].tid);
+    });
+    callback(sids);
+}
+
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+
+function savePlaylist() {
+    getCurTracks(function(spotifyTracks) {
+        var title = getPlaylistTitle();
+        console.log('savePlaylist', title, spotifyTracks);
+        var client_id = '';
+        var redirect_uri = '';
+
+        console.log('location.host', location.host);
+        if (location.host == 'localhost:8778') {
+            client_id = 'bd17bb97832c44b28f4336c710fda877';
+            redirect_uri = 'http://localhost:8778/CityServer/callback.html';
+        } else {
+            client_id = '64c58b215d9d4e8caf3744e4592cf9ce';
+            redirect_uri = 'http://labs.echonest.com/CityServer/callback.html';
+        }
+
+        console.log('redirect ...', redirect_uri);
+
+        var url = 'https://accounts.spotify.com/authorize?client_id=' + client_id +
+            '&response_type=token' +
+            '&scope=playlist-modify-private' +
+            '&redirect_uri=' + encodeURIComponent(redirect_uri);
+        localStorage.setItem('createplaylist-tracks', JSON.stringify(spotifyTracks));
+        localStorage.setItem('createplaylist-name', title);
+        var w = window.open(url, 'asdf', 'WIDTH=400,HEIGHT=500');
+    });
+}
+
 
 function track(action, label) {
     _gaq.push( ['_trackEvent', 'roadtrip', action, label]);

@@ -107,7 +107,7 @@ a.button {
    height:33px;
 }
 
-#playlist_button {
+.playlist_button {
     text-align:center;
     height:24px;
     width:190px;
@@ -116,7 +116,7 @@ a.button {
     background-color:#84BC00;
 }
 
-#playlist_button:hover {
+.playlist_button:hover {
     background-color:#84CC00;
 }
 
